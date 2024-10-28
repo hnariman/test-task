@@ -58,6 +58,7 @@ export const App: React.FC<{}> = () => {
           placeholder="Search..."
           value={search}
           onChange={(e) => onSearch(e.target.value)}
+          autoFocus
         />
       </header>
       {filteredTickets ? (
