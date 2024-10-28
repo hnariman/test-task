@@ -2,7 +2,9 @@ import React from "react";
 import styles from "./App.module.scss";
 import { createApiClient, TicketDto } from "./api";
 import { Ticket } from "./Ticket";
-import Spinner from "./components/Spinner";
+import Spinner from "./components/spinner/Spinner";
+import Input from "./components/input/Input";
+
 export type AppState = {
   tickets?: TicketDto[];
   search: string;
@@ -55,7 +57,7 @@ export const App: React.FC<{}> = () => {
     <main>
       <h1>Tickets List</h1>
       <header className={styles.header}>
-        <input
+        <Input
           type="search"
           placeholder="Search..."
           value={search}
