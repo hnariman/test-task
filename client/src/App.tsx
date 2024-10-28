@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./App.module.scss";
 import { createApiClient, TicketDto } from "./api";
 import { Ticket } from "./Ticket";
+import Spinner from "./components/Spinner";
 export type AppState = {
   tickets?: TicketDto[];
   search: string;
@@ -33,6 +34,7 @@ export const App: React.FC<{}> = () => {
       setFilteredTickets(tickets);
     });
   }, []);
+
 
   const onSearch = async (val: string) => {
     setSearch(val);
@@ -66,7 +68,7 @@ export const App: React.FC<{}> = () => {
           Showing {filteredTickets.length} results
         </div>
       ) : null}
-      {filteredTickets ? RenderTickets(filteredTickets) : <h2>Loading..</h2>}
+      {filteredTickets ? RenderTickets(filteredTickets) : <Spinner />}
     </main>
   );
 };
