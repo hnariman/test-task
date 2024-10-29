@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { TicketDto } from "./api";
 import styles from "./Ticket.module.scss";
 
@@ -6,7 +6,7 @@ export interface TicketProps {
   ticket: TicketDto;
 }
 export const Ticket: React.FC<TicketProps> = ({ ticket }) => {
-  const magicValue = ticketMagicValue(ticket);
+  const magicValue = useMemo(() => ticketMagicValue(ticket), [ticket]);
   return (
     <div className={styles.ticket}>
       <h5 className={styles.title}>{ticket.title}</h5>
