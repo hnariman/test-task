@@ -43,7 +43,7 @@ export const dbClient = (opts: { filePath: string }): DbClient => {
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 4000));
       return knex("data")
         .whereLike("title", `%${searchText}%`)
-        .orWhereLike("content", `%${searchText}`)
+        .orWhereLike("content", `%${searchText}%`)
         .offset(page)
         .limit(limit);
     },
