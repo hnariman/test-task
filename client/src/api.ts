@@ -10,13 +10,13 @@ export interface TicketDto {
 }
 
 export type ApiClient = {
-  getTickets: () => Promise<TicketDto[]>;
+  getTickets: (searchText?: string) => Promise<TicketDto[]>;
 };
 
 export const createApiClient = (): ApiClient => {
   return {
-    getTickets: () => {
-      return axios.get(APIRootPath).then((res) => res.data);
+    getTickets: (searchText?: string) => {
+      return axios.get(APIRootPath, { params: { searchText } }).then((res) => res.data);
     },
   };
 };

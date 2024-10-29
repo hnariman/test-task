@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styles from "./App.module.scss";
 import { createApiClient, TicketDto } from "./api";
 import { Ticket } from "./Ticket";
@@ -27,29 +27,19 @@ function RenderTickets(filteredTickets: TicketDto[]) {
 export const App: React.FC<{}> = () => {
   const [search, setSearch] = React.useState("");
   const [tickets, setTickets] = React.useState<TicketDto[]>();
-  const [filteredTickets, setFilteredTickets] = React.useState<TicketDto[]>();
   const searchDebounce = React.useRef<any>(null);
 
-  React.useEffect(() => {
-    api.getTickets().then((tickets) => {
-      setTickets(tickets);
-      setFilteredTickets(tickets);
-    });
-  }, []);
+  const getTicket = useCallback(
+    (searchText?: string) => api.getTickets(searchText).then(setTickets), []);
+
+  React.useEffect(() => { getTicket() }, [getTicket]);
 
 
   const onSearch = async (val: string) => {
     setSearch(val);
     clearTimeout(searchDebounce.current);
-    searchDebounce.current = setTimeout(async () => {
-      const filteredTickets =
-        tickets &&
-        tickets.filter((t) =>
-          (t.title.toLowerCase() + t.content.toLowerCase()).includes(
-            val.toLowerCase()
-          )
-        );
-      setFilteredTickets(filteredTickets);
+    searchDebounce.current = setTimeout(async (ticket: string) => {
+      getTicket(val);
     }, 300);
   };
 
@@ -65,12 +55,12 @@ export const App: React.FC<{}> = () => {
           autoFocus
         />
       </header>
-      {filteredTickets ? (
+      {tickets ? (
         <div className={styles.results}>
-          Showing {filteredTickets.length} results
+          Showing {tickets.length} results
         </div>
       ) : null}
-      {filteredTickets ? RenderTickets(filteredTickets) : <Spinner />}
+      {tickets ? RenderTickets(tickets) : <Spinner />}
     </main>
   );
 };
