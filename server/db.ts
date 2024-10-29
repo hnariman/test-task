@@ -1,9 +1,18 @@
 import { TicketDto } from "../client/src/api";
 import Knex from "knex";
 
+export interface PaginationParams {
+  limit: number,
+  page: number,
+}
+
+export interface PaginationAndSearch extends PaginationParams {
+  searchText: string
+}
+
 export interface DbClient {
-  getTickets: () => Promise<TicketDto[]>;
-  getTicketsWithSearch: (text: string) => Promise<TicketDto[]>;
+  getTickets: (p: PaginationParams) => Promise<TicketDto[]>;
+  getTicketsWithSearch: (p: PaginationAndSearch) => Promise<TicketDto[]>;
 }
 
 export const dbClient = (opts: { filePath: string }): DbClient => {
@@ -25,17 +34,18 @@ export const dbClient = (opts: { filePath: string }): DbClient => {
     )
     .then(() => void 0);
   return {
-    getTickets(): Promise<TicketDto[]> {
+    getTickets({ page, limit }): Promise<TicketDto[]> {
       // If you are unfamiliar with knex, you can uncomment the next line and use raw sql in your code
       // return knex.raw('select * from data limit 20');
-      return knex("data").select().limit(20);
+      return knex("data").select().offset(page).limit(limit);
     },
-    async getTicketsWithSearch(text: string): Promise<TicketDto[]> {
+    async getTicketsWithSearch({ searchText, limit, page }): Promise<TicketDto[]> {
       await new Promise((resolve) => setTimeout(resolve, Math.random() * 4000));
       return knex("data")
-        .whereLike("title", `%${text}%`)
-        .orWhereLike("content", `%${text}`)
-        .limit(20);
+        .whereLike("title", `%${searchText}%`)
+        .orWhereLike("content", `%${searchText}`)
+        .offset(page)
+        .limit(limit);
     },
   };
 };

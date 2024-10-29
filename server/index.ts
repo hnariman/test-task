@@ -18,15 +18,18 @@ app.use((_, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.send("ok");
 });
 
 app.get(APIPath, async (req, res) => {
-  const { searchText } = req.query;
+  const searchText = req.query.searchText as string;
+  const page = Number(req.query?.page) || 0;
+  const limit = Number(req.query?.limit) || 2;
+
   const data = searchText
-    ? await db.getTicketsWithSearch(searchText as string)
-    : await db.getTickets();
+    ? await db.getTicketsWithSearch({ searchText, limit, page })
+    : await db.getTickets({ limit, page });
   res.json(data);
 });
 
